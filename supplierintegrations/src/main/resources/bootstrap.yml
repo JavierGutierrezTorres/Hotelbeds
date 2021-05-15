@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: suplierintegrations
+  cloud:
+    config:
+      failFast: true
+      enabled: false

@@ -1,0 +1,26 @@
+server:
+  contextPath: /suplierintegrations
+
+endpoints:
+
+
+data:
+  ipPosition: 0
+  datePosition: 1
+  actionPosition: 2
+  namePosition: 3
+
+spring:
+  # Datasource configuration
+  dataSource:
+    artemis:
+      database: H2
+      driver-class-name: org.h2.Driver
+      hibernate:
+        ddl-auto: create
+      username: sa
+      password: ''
+      show-sql: true
+      url: jdbc:h2:mem::mem:testdb
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
