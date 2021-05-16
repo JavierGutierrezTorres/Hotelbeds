@@ -8,11 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -60,12 +61,8 @@ public class HackerDetectorImpl implements HackerDetector {
         return result;
     }
 
-    private Date addMinutes (Date loginDate, int minutes) {
-        Calendar time = Calendar.getInstance();
-        time.setTime(loginDate);
-        time.add(Calendar.MINUTE, minutes);
-
-        return time.getTime();
+    private LocalDateTime addMinutes (LocalDateTime loginDate, int minutes) {
+        return loginDate.plusMinutes(minutes);
     }
 
     private UserDataLogin createUserParam(String line) {
@@ -95,8 +92,8 @@ public class HackerDetectorImpl implements HackerDetector {
         return userDataLogin;
     }
 
-    private Date longToDate(String split) {
-        return new Date(TimeUnit.SECONDS.toMillis(Long.parseLong(split)));
+    private LocalDateTime longToDate(String split) {
+        return Instant.ofEpochMilli(Long.parseLong(split)).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
 }

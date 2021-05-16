@@ -3,7 +3,7 @@ package com.hotelbeds.supplierintegrations.hackertest.dao.entity;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "LOGIN_LOG")
@@ -21,7 +21,7 @@ public class LoginLog {
 
     @Column(name = "LOGIN_DATE")
     @NotNull
-    private Date loginDate;
+    private LocalDateTime loginDate;
 
     @Column(name = "ACTION", columnDefinition = "varchar2(30)")
     @NotNull

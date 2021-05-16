@@ -4,7 +4,8 @@ import com.hotelbeds.supplierintegrations.hackertest.model.enumerate.Action;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -12,7 +13,7 @@ public class UserDataLogin {
 
     private String ip;
 
-    private Date loginDate;
+    private LocalDateTime loginDate;
 
     private Action action;
 
