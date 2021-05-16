@@ -5,6 +5,8 @@ import com.hotelbeds.supplierintegrations.hackertest.model.enumerate.Action
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.time.LocalDateTime
+
 class LoginLogDaoUnitSpec extends Specification {
 
     @Subject
@@ -14,6 +16,8 @@ class LoginLogDaoUnitSpec extends Specification {
 
     private final static String IP = "80.238.9.179"
 
+    LocalDateTime dateTime = LocalDateTime.of(2014, 9, 10, 6, 40, 45);
+
     def setup() {
         loginLogDao = new LoginLogDao(
                 loginLogRepository: loginLogRepository
@@ -22,10 +26,10 @@ class LoginLogDaoUnitSpec extends Specification {
 
     def 'Try count login log'() {
         when:
-            loginLogDao.countLoginLog(IP, Action.SIGNIN_SUCCESS.toString(), new Date())
+            loginLogDao.countLoginLog(IP, Action.SIGNIN_SUCCESS.toString(), dateTime)
         then:
             1 * loginLogRepository.countByIdAndActionAndLoginDateGreaterThan(
-                    IP, Action.SIGNIN_SUCCESS.toString(), _ as Date
+                    IP, Action.SIGNIN_SUCCESS.toString(), dateTime
             )
 
     }

@@ -1,16 +1,18 @@
 package com.hotelbeds.supplierintegrations.hackertest.detector
 
-import com.hotelbeds.supplierintegrations.hackertest.dao.LoginLogDaoUnitSpec
+import com.hotelbeds.supplierintegrations.hackertest.dao.LoginLogDao
 import com.hotelbeds.supplierintegrations.hackertest.model.enumerate.Action
 import spock.lang.Specification
 import spock.lang.Subject
+
+import java.time.LocalDateTime
 
 class HackerDetectorImplUnitSpec extends Specification{
 
     @Subject
     private HackerDetectorImpl hackerDetector
 
-    private LoginLogDaoUnitSpec loginLogDao = Mock(LoginLogDaoUnitSpec)
+    private LoginLogDao loginLogDao = Mock(LoginLogDao)
 
     private Integer ipPosition = 0;
     private Integer datePosition = 1;
@@ -54,7 +56,7 @@ class HackerDetectorImplUnitSpec extends Specification{
         when:
             String result = hackerDetector.parseLine(line)
         then:
-            1 * loginLogDao.countLoginLog (_ as String, _ as String, _ as Date) >> (hackTriesthreshold - 1)
+            1 * loginLogDao.countLoginLog (_ as String, _ as String, _ as LocalDateTime) >> (hackTriesthreshold - 1)
             result == null
     }
 
@@ -64,7 +66,7 @@ class HackerDetectorImplUnitSpec extends Specification{
         when:
             String result = hackerDetector.parseLine(line)
         then:
-            1 * loginLogDao.countLoginLog (_ as String, _ as String, _ as Date) >> hackTriesthreshold
+            1 * loginLogDao.countLoginLog (_ as String, _ as String, _ as LocalDateTime) >> hackTriesthreshold
             IP == result
     }
 

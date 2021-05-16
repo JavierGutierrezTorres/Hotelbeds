@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -35,6 +33,9 @@ public class HackerDetectorImpl implements HackerDetector {
     Integer hackTriesthreshold;
 
     private static final String COMMA = ",";
+    private static final int MINUTES_PER_HOUR = 60;
+    private static final int SECONDS_PER_MINUTE = 60;
+    private static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 
     @Autowired
     private LoginLogDao loginLogDao;
@@ -59,6 +60,12 @@ public class HackerDetectorImpl implements HackerDetector {
         }
 
         return result;
+    }
+
+    public Long timeCalculation (LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) {
+        long millis = Duration.between(startLocalDateTime, endLocalDateTime).toMillis();
+
+        return TimeUnit.MILLISECONDS.toMinutes(millis);
     }
 
     private LocalDateTime addMinutes (LocalDateTime loginDate, int minutes) {
