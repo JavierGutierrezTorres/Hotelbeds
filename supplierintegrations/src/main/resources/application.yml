@@ -1,14 +1,18 @@
 server:
   contextPath: /suplierintegrations
 
-endpoints:
-
+services:
+  localHost: http://localhost:8080
+  urls:
+    loginData: ${services.localHost}/loginData
 
 data:
   ipPosition: 0
   datePosition: 1
   actionPosition: 2
   namePosition: 3
+  hackMinutesthreshold: -5
+  hackTriesthreshold: -5
 
 spring:
   # Datasource configuration

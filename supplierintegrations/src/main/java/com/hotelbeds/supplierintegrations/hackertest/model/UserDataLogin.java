@@ -1,6 +1,6 @@
-package com.hotelbeds.supplierintegrations.hackertest.domain;
+package com.hotelbeds.supplierintegrations.hackertest.model;
 
-import com.hotelbeds.supplierintegrations.hackertest.domain.enumerate.Action;
+import com.hotelbeds.supplierintegrations.hackertest.model.enumerate.Action;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class User {
+public class UserDataLogin {
 
     private String ip;
 

@@ -1,24 +1,24 @@
 package com.hotelbeds.supplierintegrations.hackertest.detector;
 
-import com.hotelbeds.supplierintegrations.hackertest.domain.User;
-import com.hotelbeds.supplierintegrations.hackertest.domain.enumerate.Action;
+import com.hotelbeds.supplierintegrations.hackertest.dao.LoginLogDao;
+import com.hotelbeds.supplierintegrations.hackertest.model.UserDataLogin;
+import com.hotelbeds.supplierintegrations.hackertest.model.enumerate.Action;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class HackerDetectorImpl implements HackerDetector {
-
-    private static final String COMMA = ",";
-
-    private static final String DOT = ".";
 
     @Value("${data.ipPosition}")
     Integer ipPosition;
@@ -28,41 +28,71 @@ public class HackerDetectorImpl implements HackerDetector {
     Integer actionPosition;
     @Value("${data.namePosition}")
     Integer namePosition;
+    @Value("${data.hackMinutesthreshold}")
+    Integer hackMinutesthreshold;
+    @Value("${data.hackTriesthreshold}")
+    Integer hackTriesthreshold;
 
+    private static final String COMMA = ",";
+
+    @Autowired
+    private LoginLogDao loginLogDao;
 
     public String parseLine(String line) {
 
-        User user = createUserParam(line);
+        String result = null;
 
-        //TODO check the IP
+        UserDataLogin userDataLogin = createUserParam(line);
 
-        return null;
+        if (Action.SIGNIN_FAILURE.toString().equals(userDataLogin.getAction().toString())) {
+            Integer countLoginLog = loginLogDao.countLoginLog(
+                    userDataLogin.getIp(),
+                    userDataLogin.getAction().toString(),
+                    addMinutes(userDataLogin.getLoginDate(), hackMinutesthreshold)
+            );
+
+            if (countLoginLog >= hackTriesthreshold){
+                result = userDataLogin.getIp();
+            }
+
+        }
+
+        return result;
     }
 
-    private User createUserParam(String line) {
+    private Date addMinutes (Date loginDate, int minutes) {
+        Calendar time = Calendar.getInstance();
+        time.setTime(loginDate);
+        time.add(Calendar.MINUTE, minutes);
+
+        return time.getTime();
+    }
+
+    private UserDataLogin createUserParam(String line) {
         List<String> splitLine = Arrays.stream(line.split(COMMA)).collect(Collectors.toList());
 
-        User user = new User();
+        UserDataLogin userDataLogin = new UserDataLogin();
 
-        int cont = 0;
+        AtomicInteger cont = new AtomicInteger();
         splitLine.forEach(split -> {
-                    if (cont == ipPosition) {
-                        user.setIp(split);
-                    } else if (cont == datePosition) {
-                        user.setLoginDate(longToDate(split));
-                    } else if (cont == actionPosition) {
-                        user.setAction(Action.SIGNIN_SUCCESS.toString().equals(split)
+                    if (cont.get() == ipPosition) {
+                        userDataLogin.setIp(split.trim());
+                    } else if (cont.get() == datePosition) {
+                        userDataLogin.setLoginDate(longToDate(split.trim()));
+                    } else if (cont.get() == actionPosition) {
+                        userDataLogin.setAction(Action.SIGNIN_SUCCESS.toString().equals(split.trim())
                                 ? Action.SIGNIN_SUCCESS : Action.SIGNIN_FAILURE);
 
-                    } else if (cont == namePosition) {
-                        user.setName(split);
+                    } else if (cont.get() == namePosition) {
+                        userDataLogin.setName(split.trim());
                     } else {
                         log.error("Not found configuration for position [{}]", cont);
                     }
+                    cont.getAndIncrement();
                 }
         );
 
-        return user;
+        return userDataLogin;
     }
 
     private Date longToDate(String split) {

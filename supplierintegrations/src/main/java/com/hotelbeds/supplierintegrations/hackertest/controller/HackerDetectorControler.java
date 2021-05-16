@@ -20,8 +20,8 @@ public class HackerDetectorControler {
 
     @GetMapping(value = "")
     @ResponseStatus(code = HttpStatus.OK)
-    public void getHackerDetector (String line) {
-        hackerDetector.parseLine(line);
+    public String getHackerDetector (String line) {
+        return hackerDetector.parseLine(line);
     }
 
 
