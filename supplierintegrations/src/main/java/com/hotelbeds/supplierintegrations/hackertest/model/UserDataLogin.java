@@ -19,4 +19,11 @@ public class UserDataLogin {
 
     private String name;
 
+    public Boolean isAllDataInform (){
+        return this.getIp() != null
+                && this.getLoginDate() != null
+                && this.getAction() != null
+                && this.getName() != null;
+    }
+
 }
